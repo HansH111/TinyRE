@@ -10,9 +10,17 @@ int tre_max_backtrack_steps = TRE_DEFAULT_MAX_BACKTRACK_STEPS;
 
 int tre_last_error = 0;
 
+int tre_peak_backtrack = 0;
+int tre_peak_recursion = 0;
+
 // Internal backtracking step counter (reset for each match call)
 static int tre_backtrack_steps = 0;
 static int tre_igncase = 0;                    // Case-sensitive by default
+
+void tre_reset_peaks(void) {
+    tre_peak_backtrack = 0;
+    tre_peak_recursion = 0;
+}
 
 static int matchcompare(char a, char b) {
     return tre_igncase ? (tolower((unsigned char)a) == tolower((unsigned char)b)) : (a == b);
@@ -91,6 +99,7 @@ static int matchoneatom(char **regexp_ptr, char *text, int *repeat_count)
 static char* matchhere(char *regexp, char *text, int *outlen, int depth)
 {
     if (outlen) *outlen = 0;
+    if (depth > tre_peak_recursion)   tre_peak_recursion = depth;
     if (depth > tre_max_depth) {
         if (tre_last_error == TRE_OK) tre_last_error = TRE_ERROR_RECURSION_DEPTH;
         return NULL;
@@ -136,7 +145,8 @@ static char* matchhere(char *regexp, char *text, int *outlen, int depth)
 
     // Consume more repetitions greedily
     while ((max_rep < 0 || count < max_rep) && *text != '\0') {
-        if (++tre_backtrack_steps > tre_max_backtrack_steps) {
+        if (++tre_backtrack_steps > tre_peak_backtrack)   tre_peak_backtrack = tre_backtrack_steps;
+        if (tre_backtrack_steps > tre_max_backtrack_steps) {
             if (tre_last_error == TRE_OK) tre_last_error = TRE_ERROR_BACKTRACK_LIMIT;
             return NULL;
         }
@@ -157,7 +167,8 @@ static char* matchhere(char *regexp, char *text, int *outlen, int depth)
             if (outlen) *outlen = (int)((text - start) + rest_len);
             return start;
         }
-        if (++tre_backtrack_steps > tre_max_backtrack_steps) {
+        if (++tre_backtrack_steps > tre_peak_backtrack)   tre_peak_backtrack = tre_backtrack_steps;
+        if (tre_backtrack_steps > tre_max_backtrack_steps) {
             if (tre_last_error == TRE_OK) tre_last_error = TRE_ERROR_BACKTRACK_LIMIT;
             return NULL;
         }
