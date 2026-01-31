@@ -1,0 +1,68 @@
+name: Release Please
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: simple
+          package-name: tinyre
+          # Customize sections that appear in changelog
+          changelog-types: |
+            - type: feat
+              section: Features
+              hidden: false
+            - type: fix
+              section: Bug Fixes
+              hidden: false
+            - type: docs
+              section: Documentation
+              hidden: false
+            - type: chore
+              section: Build & CI
+              hidden: false
+            - type: refactor
+              section: Refactoring
+              hidden: true
+            - type: test
+              section: Tests
+              hidden: true
+
+      # The steps below only run AFTER a release PR is merged and tagged
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Install build tools
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Build static library
+        if: ${{ steps.release.outputs.release_created }}
+        run: |
+          make clean
+          make lib
+
+      - name: Upload assets to release
+        if: ${{ steps.release.outputs.release_created }}
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            libtre.a
+            include/tre.h
+            README.md
+          tag_name: ${{ steps.release.outputs.tag_name }}
+          generate_release_notes: true
+
