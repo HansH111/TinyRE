@@ -13,13 +13,18 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Release Please
         id: release
+        uses: googleapis/release-please-action@v4
         with:
           release-type: simple
-          package-name: tinyre
-          # Customize sections that appear in changelog
-          changelog-types: |
+          packageName: tinyre
+          # Customize how commit types appear in the changelog
+          changelogTypes: |
             - type: feat
               section: Features
               hidden: false
@@ -30,7 +35,7 @@ jobs:
               section: Documentation
               hidden: false
             - type: chore
-              section: Build & CI
+              section: Build System & CI
               hidden: false
             - type: refactor
               section: Refactoring
@@ -39,9 +44,14 @@ jobs:
               section: Tests
               hidden: true
 
-      # The steps below only run AFTER a release PR is merged and tagged
-      - uses: actions/checkout@v4
+      # ──────────────────────────────────────────────────────────────
+      # The steps below only run AFTER the release PR is merged
+      # and a new tag/release is created by release-please
+      # ──────────────────────────────────────────────────────────────
+
+      - name: Checkout code (for build)
         if: ${{ steps.release.outputs.release_created }}
+        uses: actions/checkout@v4
 
       - name: Install build tools
         if: ${{ steps.release.outputs.release_created }}
@@ -65,4 +75,13 @@ jobs:
             README.md
           tag_name: ${{ steps.release.outputs.tag_name }}
           generate_release_notes: true
+          body: |
+            TinyRE ${{ steps.release.outputs.tag_name }} is released!
+
+            **Included assets:**
+            - `include/tre.h` — header file
+            - `libtre.a` — static library (built on ubuntu-latest)
+            - `README.md` — full documentation
+
+            Built automatically via GitHub Actions.
 
