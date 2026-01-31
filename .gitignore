@@ -1,0 +1,15 @@
+# Build artifacts
+*.o
+*.a
+*.so
+
+# Backup files
+*.bak
+*.old
+
+# Test coverage
+*.gcov
+*.gcda
+
+# Logs
+*.log
