@@ -1,0 +1,9 @@
+# Changelog
+
+## [1.1.0](https://github.com/HansH111/TinyRE/compare/v1.0.1...v1.1.0) (2026-01-31)
+
+
+### Features
+
+* **ci:** add release-please workflow for automated releases ([5040330](https://github.com/HansH111/TinyRE/commit/5040330898b0ad62ccad514b4679920150132884))
+* **ci:** introduce release-please for automated versioning and changelog ([68bd901](https://github.com/HansH111/TinyRE/commit/68bd901c211a9b8ba5b186bb5617895db2845d22))
