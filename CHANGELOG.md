@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/HansH111/TinyRE/compare/v1.1.0...v1.1.1) (2026-01-31)
+
+
+### Bug Fixes
+
+* include the tre.h without the path ([c947fab](https://github.com/HansH111/TinyRE/commit/c947fab74c3f28cdaeacebe4e7f8d81eeeaab8b5))
+
 ## [1.1.0](https://github.com/HansH111/TinyRE/compare/v1.0.1...v1.1.0) (2026-01-31)
 
 
