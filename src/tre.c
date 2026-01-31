@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "../include/tre.h"
+#include "tre.h"
 
 // Global configuration variables (initialized to safe defaults)
 int tre_max_pattern_length  = TRE_DEFAULT_MAX_PATTERN_LENGTH;
