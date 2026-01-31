@@ -36,7 +36,7 @@ jobs:
       - name: Prepare release assets
         run: |
           mkdir -p release
-          cp src/tre.h release/
+          cp include/tre.h release/
           cp libtre.a release/
           cp LICENSE release/  # if you have a LICENSE file
           cp README.md release/
