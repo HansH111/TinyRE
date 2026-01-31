@@ -2,6 +2,7 @@
 *.o
 *.a
 *.so
+test
 
 # Backup files
 *.bak
@@ -13,3 +14,4 @@
 
 # Logs
 *.log
+*.txt
