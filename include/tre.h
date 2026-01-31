@@ -2,9 +2,10 @@
 #define TRE_H
 
 // Basic safety restrictions
-#define TRE_DEFAULT_MAX_PATTERN_LENGTH    64    // Default max regex pattern length
-#define TRE_DEFAULT_MAX_RECURSION_DEPTH  128    // Default max recursive calls
-#define TRE_DEFAULT_MAX_BACKTRACK_STEPS 1024    // Default max backtracking steps
+#define TRE_DEFAULT_MAX_PATTERN_LENGTH     64    // Default max regex pattern length
+#define TRE_DEFAULT_MAX_RECURSION_DEPTH   128    // Default max recursive calls
+#define TRE_DEFAULT_MAX_BACKTRACK_STEPS 20480    // Default max backtracking steps
+
 
 // Error codes (returned in tre_last_error when match() returns NULL)
 #define TRE_OK                        0
@@ -52,6 +53,9 @@ extern "C" {
  */
 char* match(char *regexp, char *text, int *length, int igncase, int direction);
 
+// Reset the peak trackers to zero
+void tre_reset_peaks(void);
+
 #ifdef __cplusplus
 }
 #endif
@@ -62,5 +66,9 @@ extern int tre_max_pattern_length;   // Max pattern length     (default: TRE_DEF
 extern int tre_max_depth;            // Max recursion depth    (default: TRE_DEFAULT_MAX_RECURSION_DEPTH)
 extern int tre_max_backtrack_steps;  // Max backtracking steps (default: TRE_DEFAULT_MAX_BACKTRACK_STEPS)
 extern int tre_last_error;
+
+// Global high-water mark trackers (persistent until tre_reset_peaks() is called)
+extern int tre_peak_backtrack;     // highest backtrack steps seen in any match() so far
+extern int tre_peak_recursion;     // deepest recursion level reached in any match() so far
 
 #endif /* TRE_H */
