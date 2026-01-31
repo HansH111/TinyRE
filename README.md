@@ -23,13 +23,8 @@ TinyRE/
 │   ├── tre.c             # TinyRE implementation
 │   ├── test_tre.c        # Test suite
 │   └── test_error.c      # Error handling test suite
-├── build/                # Build output directory
-│   ├── libtre.a          # Static library
-│   ├── tre.o             # Object file
-│   ├── test_tre.o        # Test object file
-│   ├── test_error.o      # Error test object file
-│   ├── test_tre          # Test executable
-│   └── test_error        # Error test executable
+|── libtre.a              # Static library
+├── test                  # Test executable
 ├── Makefile              # Build system
 ├── README.md             # This file
 └── LICENSE               # BSD 2-clause license
@@ -206,7 +201,7 @@ Use the Makefile to build the library and tests:
 
 ```bash
 make              # Build library and test executable
-make test         # Build and run tests
+make check        # Build and run test
 make clean        # Clean build artifacts
 ```
 
@@ -217,18 +212,18 @@ To use TinyRE in your own project:
 make
 
 # Link against the static library in your project
-gcc -std=c99 -Wall -O2 -o myprogram myprogram.c build/libtre.a -Iinclude
+gcc -std=c99 -Wall -O2 -o myprogram myprogram.c libtre.a -Iinclude
 ```
 
-The library will be built as `build/libtre.a` and the header is available at `include/tre.h`.
+The library will be built as `libtre.a` and the header is available at `include/tre.h`.
 
 ## Running Tests
 
 ```bash
-make test
+make check
 ```
 
-This runs both the main test suite and the error handling tests:
+This runs the main test suite
 
 ```bash
 # Expected output:
@@ -238,28 +233,21 @@ Running TinyRE tests...
 ...
 66 / 66 tests passed (100.0%)
 
-Running TinyRE errors...
-[PASS] abc                           →  "abc"  len=3  err=0
-[PASS] Pattern too long              →  "text"  len=0  err=2
-...
-9 / 9 tests passed (100.0%)
-```
-
 Or manually:
 
 ```bash
 # Build main tests
-gcc -std=c99 -Wall -Wextra -pedantic -O2 -Iinclude -c src/test_tre.c -o build/test_tre.o
-gcc -std=c99 -Wall -Wextra -pedantic -O2 -c src/tre.c -o build/tre.o
-ar rcs build/libtre.a build/tre.o
-ranlib build/libtre.a
-gcc -std=c99 -Wall -Wextra -pedantic -O2 -o build/test_tre build/test_tre.o build/libtre.a
-./build/test_tre
+gcc -std=c99 -Wall -Wextra -pedantic -O2 -Iinclude -c src/test_tre.c -o test_tre.o
+gcc -std=c99 -Wall -Wextra -pedantic -O2 -c src/tre.c -o tre.o
+ar rcs libtre.a tre.o
+ranlib libtre.a
+gcc -std=c99 -Wall -Wextra -pedantic -O2 -o test_tre test_tre.o libtre.a
+./test_tre
 
 # Build error tests
-gcc -std=c99 -Wall -Wextra -pedantic -O2 -Iinclude -c src/test_error.c -o build/test_error.o
-gcc -std=c99 -Wall -Wextra -pedantic -O2 -o build/test_error build/test_error.o build/libtre.a
-./build/test_error
+gcc -std=c99 -Wall -Wextra -pedantic -O2 -Iinclude -c src/test_error.c -o test_error.o
+gcc -std=c99 -Wall -Wextra -pedantic -O2 -o test_error test_error.o libtre.a
+./test_error
 ```
 
 Expected test output format:
