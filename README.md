@@ -339,6 +339,28 @@ Long text, no quantifiers                 | < 1 KiB             | `^prefix$` on 
 - ~~Add a recursion depth limit~~ ✅ **Now implemented**
 - Switch to an explicit NFA/DFA engine (much larger code)
 
+## Tuning
+
+After calling match(), you can inspect:
+- tre_peak_backtrack:   maximum backtrack steps used in any match() call so far
+- tre_peak_recursion:   deepest recursion depth reached in any match() call so far
+
+These values are **persistent high-water marks** — they only increase and keep the highest value seen across multiple calls.
+
+To reset them (e.g. at the start of a new batch of searches):
+
+   tre_reset_peaks();
+
+Example tuning workflow:
+
+    tre_reset_peaks();
+    match("expensive_pattern", long_text, ...);
+    if (tre_peak_backtrack > 5000) {
+        // log or adjust limit
+        printf("Peak backtrack usage: %d steps\n", tre_peak_backtrack);
+        tre_max_backtrack_steps = tre_peak_backtrack + 2000;
+    }
+  
 ## API Design Philosophy
 
 TinyRE uses a **hybrid approach** that provides the best of both worlds:
