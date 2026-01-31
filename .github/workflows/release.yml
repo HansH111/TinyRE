@@ -1,0 +1,65 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # required to create releases
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # needed for git describe / tag info
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential
+
+      - name: Build static library and test
+        run: |
+          make clean
+          make lib
+          make check
+
+      - name: Verify tests passed
+        run: |
+          ./test || { echo "Tests failed!"; exit 1; }
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release
+          cp src/tre.h release/
+          cp libtre.a release/
+          cp LICENSE release/  # if you have a LICENSE file
+          cp README.md release/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/tre.h
+            release/libtre.a
+            release/README.md
+            release/LICENSE
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          body: |
+            TinyRE ${{ github.ref_name }} is released!
+
+            **Included files:**
+            - `tre.h` — header file
+            - `libtre.a` — static library (built with gcc on ubuntu-latest)
+            - `README.md` — documentation
+
+            Built automatically via GitHub Actions.
+            See [CHANGELOG](https://github.com/HansH111/TinyRE/blob/main/CHANGELOG.md) (if exists) or commit history for changes.
+
