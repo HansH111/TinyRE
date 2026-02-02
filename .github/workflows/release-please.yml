@@ -68,6 +68,8 @@ jobs:
       - name: Upload assets to release
         if: ${{ steps.release.outputs.release_created }}
         uses: softprops/action-gh-release@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           files: |
             libtre.a
@@ -84,4 +86,3 @@ jobs:
             - `README.md` — full documentation
 
             Built automatically via GitHub Actions.
-
