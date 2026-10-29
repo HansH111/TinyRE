@@ -4,6 +4,8 @@ TinyRE is a lightweight, self-contained regular expression library written in pu
 
 It is ideal for resource-constrained environments, embedded systems, learning projects, or any application where a small footprint and simplicity are more important than full POSIX/PCRE compatibility.
 
+Repo moved to: https://codeberg.org/HansH111/TinyRE.git
+
 **Key Features:**
 - **~200 lines of clean C code** with comprehensive error handling
 - **Built-in safety protections** against DoS attacks (pattern length, recursion depth, backtracking limits)
